@@ -4,13 +4,16 @@
     "module": "commonjs",
     "lib": ["ES2020"],
     "outDir": "./dist",
-    "rootDir": "./src",
-    "strict": true,
+    "strict": false,
+    "noImplicitAny": false,
+    "strictNullChecks": false,
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "moduleResolution": "node"
   },
-  "include": ["src/*/"],
-  "exclude": ["node_modules", "dist"]
+  "include": ["./**/*.ts"],
+  "exclude": ["node_modules", "dist", "prisma"]
 }
