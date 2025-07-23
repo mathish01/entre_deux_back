@@ -2,6 +2,7 @@
 import express from "express"
 import cors from "cors"
 import usersRoutes from "./User/UsersRoutes"
+import postsRoutes from "./User/Posts/postsRoutes"
 
 const app = express()
 const port = process.env.PORT || 3005; 
@@ -15,6 +16,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/users', usersRoutes)
+app.use('/posts', postsRoutes);
 
 
 
