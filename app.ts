@@ -14,9 +14,11 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+import commentRoutes from './User/Comments/commentsRoutes'
+
 app.use('/users', usersRoutes)
 
-
+app.use('/api/comments', commentRoutes)
 
 app.listen(port, () => {
   console.log(`L'EntreDeux listening on port ${port}`)
