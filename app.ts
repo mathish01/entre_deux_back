@@ -19,7 +19,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/users', usersRoutes)
 app.use('/posts', postsRoutes);
-app.use('/tag', tagRoutes)
+app.use('/api/tags', tagRoutes)
 app.use('/api/comments', commentRoutes)
 
 app.listen(port, () => {
