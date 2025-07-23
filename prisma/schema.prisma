@@ -57,14 +57,24 @@ model posts {
   commentaires    commentaires[]
   like_posts      like_posts[]
   users           users?            @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  references_tags references_tags[]
+  post_tags post_tags[]
 }
 
 model references_tags {
-  id      Int    @id @default(autoincrement())
-  tag     String @db.VarChar(255)
-  post_id Int?
-  posts   posts? @relation(fields: [post_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  id         Int         @id @default(autoincrement())
+  name       String      @unique @db.VarChar(255)
+  created_at DateTime?   @default(now()) @db.Timestamptz(6)
+  post_tags  post_tags[]
+}
+
+model post_tags {
+  id      Int             @id @default(autoincrement())
+  post_id Int
+  tag_id  Int
+  posts   posts           @relation(fields: [post_id], references: [id], onDelete: Cascade)
+  tag     references_tags @relation(fields: [tag_id], references: [id], onDelete: Cascade)
+  
+  @@unique([post_id, tag_id])
 }
 
 model users {
