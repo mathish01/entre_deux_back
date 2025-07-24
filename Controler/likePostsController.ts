@@ -11,29 +11,6 @@ export const getLikePosts = async (req: Request, res: Response) => {
     }
 }
 
-// export const createLikePosts = async (req: Request, res: Response) => {
-//   try {
-//     const {  user_id, post_id } = req.body;
-
-//     //
-//     if (  !user_id || !post_id) {
-//       return res.status(400).json({ error: "Champs manquants" });
-//     }
-
-//     const newLikePost = await prisma.like_posts.create({
-//       data: {
-//         user_id: Number(user_id), // au cas où c'est une string depuis le front
-//         post_id: Number(post_id)
-//       },
-//     });
-
-//     res.status(201).json(newLikePost);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: "Erreur serveur lors du like" });
-//   }
-// };
-
 
 
 export const createLikePosts = async (req: Request, res: Response) => {
