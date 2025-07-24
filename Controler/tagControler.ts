@@ -89,7 +89,7 @@ export class TagController {
             }
 
             // Normaliser le nom du tag (minuscules, sans #)
-            const normalizedName = name.tolowerCase().replace('#', '');
+            const normalizedName = name.toLowerCase().replace('#', '');
 
             // Vérifier si le tag existe déjà
             const existingTag = await prisma.references_tags.findUnique({
@@ -213,7 +213,7 @@ export class TagController {
             }
 
             // Normaliser le nom du tag
-            const normalizedName = tagName.tolowerCase().replace('#', '');
+            const normalizedName = tagName.toLowerCase().replace('#', '');
 
             // Trouver ou créer le tag
             let tag = await prisma.references_tags.findUnique({
@@ -368,7 +368,7 @@ export class TagController {
             }
 
             // Ectraire le nom du tag (sans le #)
-            const tagName = q.substring(1).toLocaleLowerCase();
+            const tagName = q.substring(1).toLowerCase();
 
             // Rechercher les posts qui ont ce tag
             const posts = await prisma.posts.findMany({
@@ -431,7 +431,7 @@ export class TagController {
                     post_tags: {
                         some: {
                             tag: {
-                                name: tagName.toLocaleLowerCase()
+                                name: tagName.toLowerCase()
                             }
                         }
                     }

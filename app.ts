@@ -20,10 +20,15 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/users', usersRoutes)
 app.use('/posts', postsRoutes);
+<<<<<<< HEAD
 app.use('/tag', tagRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/likePosts',likePostsRoutes );
 
+=======
+app.use('/api/tags', tagRoutes)
+app.use('/api/comments', commentRoutes)
+>>>>>>> a3a142a5901c10bdb9bbd766026a26c63c09250c
 
 app.listen(port, () => {
   console.log(`L'EntreDeux listening on port ${port}`)
