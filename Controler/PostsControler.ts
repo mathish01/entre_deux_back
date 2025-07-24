@@ -1,7 +1,7 @@
 import { type Request, type Response } from "express";
 import { prisma } from "../lib/prisma";
-import bcrypt from "bcryptjs";
-import { error } from "console";
+// import bcrypt from "bcryptjs"; 
+// import { error } from "console";
 
 export const getPosts = async (req: Request, res: Response) => {
  try{
