@@ -1,5 +1,5 @@
 import {Router} from "express"
-import { getLikeComments, createLikeComments, deleteLikeComments} from '../../Controler/likeCommentsController'
+import { getLikeComments, createLikeComments, deleteLikeComments} from '../../Controler/LikeCommentsController'
 
 const router = Router()
 

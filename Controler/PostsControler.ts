@@ -1,7 +1,5 @@
 import { type Request, type Response } from "express";
 import { prisma } from "../lib/prisma";
-// import bcrypt from "bcryptjs"; 
-// import { error } from "console";
 
 export const getPosts = async (req: Request, res: Response) => {
  try{
@@ -12,6 +10,7 @@ export const getPosts = async (req: Request, res: Response) => {
     }
 }
 
+// route POST création de post
 export const createPosts = async (req: Request, res: Response) => {
   try {
     const { title, description, image_url, user_id } = req.body;
@@ -37,8 +36,8 @@ export const createPosts = async (req: Request, res: Response) => {
   }
 };
 
-// route PUT mise à jour d'un post
 
+// route PUT mise à jour d'un post
 export const updatePosts = async (req: Request, res: Response)=> {
     const postId = parseInt(req.params.id);
     const {title, description, image_url} = req.body;
@@ -54,8 +53,8 @@ export const updatePosts = async (req: Request, res: Response)=> {
         }
 };
 
-//Route Delete suppression d'un post
 
+//Route Delete suppression d'un post
 export const deletePosts = async(req: Request, res: Response)=> {
     const postId = parseInt(req.params.id);
 

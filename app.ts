@@ -5,7 +5,7 @@ import usersRoutes from "./User/UsersRoutes"
 import postsRoutes from "./User/Posts/postsRoutes"
 import commentRoutes from './User/Comments/commentsRoutes'
 import tagRoutes from './User/Tag/tagRoutes'
-import likePostsRoutes from './User/likePosts/likePostsRoutes'
+import likePostsRoutes from './User/LikePosts/likePostsRoutes'
 import likeCommentsRoutes from './User/likeComments/likeComments'
 const app = express()
 const port = process.env.PORT || 3005; 

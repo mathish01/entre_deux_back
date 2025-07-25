@@ -12,7 +12,6 @@ export const getLikePosts = async (req: Request, res: Response) => {
 }
 
 
-
 export const createLikePosts = async (req: Request, res: Response) => {
   try {
     const { user_id, post_id } = req.body;
@@ -62,7 +61,6 @@ export const createLikePosts = async (req: Request, res: Response) => {
 };
 
 
-
 //Route Delete suppression d'un post
 
 export const deleteLikePosts = async(req: Request, res: Response)=> {
@@ -70,7 +68,7 @@ export const deleteLikePosts = async(req: Request, res: Response)=> {
 
         try{
             await prisma.like_posts.delete({where:{ id: likePostId}});
-            res.json({message: "Post supprimé avec succès"});
+            res.json({message: "Like supprimé avec succès"});
         }catch(error){
             console.error("Erreur lors de la suppression :", error);
             res.status(500).json({error: "Erreur serveur suppression du like "});

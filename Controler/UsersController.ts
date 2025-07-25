@@ -2,10 +2,15 @@ import { type Request, type Response } from "express";
 import { prisma } from "../lib/prisma";
 import bcrypt from "bcryptjs";
 
-export const getUsers = async (res: Response) => {
-  const getAllUsers = await prisma.users.findMany();
-  console.log(getAllUsers);
-  res.json({ getUsers: getAllUsers });
+export const getUsers = async (req: Request, res: Response) => {
+  try {
+    const getAllUsers = await prisma.users.findMany();
+    console.log(getAllUsers);
+    res.json(getAllUsers);
+  } catch (error) {
+    console.error("Erreur Prisma", error);
+    res.status(500).json({ error: "Erreur serveur" });
+  }
 };
 
 export const createUser = async (req: Request, res: Response) => {

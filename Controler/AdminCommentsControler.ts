@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
-import { triggerAsyncId } from "async_hooks";
+// import { triggerAsyncId } from "async_hooks";
 
 const prisma = new PrismaClient(); 
 

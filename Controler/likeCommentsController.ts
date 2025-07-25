@@ -24,8 +24,6 @@ export const createLikeComments = async (req: Request, res: Response) => {
       return res.status(400).json({ error: "user_id et comment_id doivent être des nombres valides" });
     }
 
-  
-
     // Création du like
     const newLikeComment = await prisma.like_comments.create({
       data: {
