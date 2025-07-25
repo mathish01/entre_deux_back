@@ -91,8 +91,8 @@ export class TagController {
         });
       }
 
-      // Normaliser le nom du tag (minuscules, sans #)
-      const normalizedName = name.tolowerCase().replace("#", "");
+            // Normaliser le nom du tag (minuscules, sans #)
+            const normalizedName = name.tolowerCase().replace('#', '');
 
       // Vérifier si le tag existe déjà
       const existingTag = await prisma.references_tags.findUnique({
@@ -227,8 +227,8 @@ export class TagController {
         });
       }
 
-      // Normaliser le nom du tag
-      const normalizedName = tagName.tolowerCase().replace("#", "");
+            // Normaliser le nom du tag
+            const normalizedName = tagName.tolowerCase().replace('#', '');
 
       // Trouver ou créer le tag
       let tag = await prisma.references_tags.findUnique({
@@ -391,8 +391,8 @@ export class TagController {
         });
       }
 
-      // Ectraire le nom du tag (sans le #)
-      const tagName = q.substring(1).toLocaleLowerCase();
+            // Ectraire le nom du tag (sans le #)
+            const tagName = q.substring(1).toLocaleLowerCase();
 
       // Rechercher les posts qui ont ce tag
       const posts = await prisma.posts.findMany({
@@ -453,33 +453,33 @@ export class TagController {
     try {
       const { tagName } = req.params;
 
-      const posts = await prisma.posts.findMany({
-        where: {
-          post_tags: {
-            some: {
-              tag: {
-                name: tagName.toLocaleLowerCase(),
-              },
-            },
-          },
-        },
-        include: {
-          users: {
-            select: {
-              id: true,
-              username: true,
-            },
-          },
-          post_tags: {
-            include: {
-              tag: true,
-            },
-          },
-        },
-        orderBy: {
-          created_at: "desc",
-        },
-      });
+            const posts = await prisma.posts.findMany({
+                where: {
+                    post_tags: {
+                        some: {
+                            tag: {
+                                name: tagName.toLocaleLowerCase()
+                            }
+                        }
+                    }
+                },
+                include: {
+                    users: {
+                        select: {
+                            id: true, 
+                            username: true
+                        }
+                    },
+                    post_tags: {
+                        include: {
+                            tag: true
+                        }
+                    }
+                },
+                orderBy: {
+                    created_at: 'desc'
+                }
+            });
 
       res.status(200).json({
         success: true,
