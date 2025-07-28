@@ -17,12 +17,12 @@ interface AuthenticatedRequest extends Request {
 }
 
 interface CreateCommentRequest {
-  commentaire: string;
+  content: string;  // corrected field name
   post_id: number;
 }
 
 interface UpdateCommentRequest {
-  commentaire: string;
+  content: string;  // corrected field name
 }
 
 interface CommentParams {
@@ -39,23 +39,23 @@ interface ApiResponse<T = any> {
 
 interface CommentWithRelations {
   id: number;
-  commentaire: string;
+  content: string;
   created_at: Date | null;
   updated_at: Date | null;
   user_id: number | null;
   post_id: number | null;
-  users?: {
+  user?: {
     id: number;
     username: string;
   } | null;
-  posts?: {
+  post?: {
     id: number;
     title: string;
   } | null;
-  like_comments?: Array<{
+  likes?: Array<{
     id: number;
     user_id: number | null;
-    commentaire_id: number | null;
+    comment_id: number | null;
   }>;
 }
 
@@ -68,18 +68,18 @@ export class CommentController {
     try {
       const { postId } = req.params;
 
-      const comments = await prisma.commentaires.findMany({
+      const comments = await prisma.comments.findMany({
         where: {
           post_id: parseInt(postId),
         },
         include: {
-          users: {
+          user: {
             select: {
               id: true,
               username: true,
             },
           },
-          like_comments: true,
+          likes: true,  // corrected relation name
         },
         orderBy: {
           created_at: "desc",
@@ -105,18 +105,18 @@ export class CommentController {
     res: Response<ApiResponse<CommentWithRelations>>
   ) {
     try {
-      const { commentaire, post_id } = req.body;
+      const { content, post_id } = req.body;
       const user_id = req.user?.id; // Suppose que l'utilisateur est authentifié
 
-      if (!commentaire || !post_id) {
+      if (!content || !post_id) {
         return res.status(400).json({
           success: false,
-          message: "Le commentaire et l'ID du post sont requis",
+          message: "Le contenu du commentaire et l'ID du post sont requis",
         });
       }
 
       const post = await prisma.posts.findUnique({
-        where: { id: parseInt(post_id.toString()) },
+        where: { id: post_id },
       });
 
       if (!post) {
@@ -126,15 +126,15 @@ export class CommentController {
         });
       }
 
-      const newComment = await prisma.commentaires.create({
+      const newComment = await prisma.comments.create({
         data: {
-          commentaire,
-          post_id: parseInt(post_id.toString()),
+          content,
+          post_id,
           user_id,
           updated_at: new Date(),
         },
         include: {
-          users: {
+          user: {
             select: {
               id: true,
               username: true,
@@ -145,7 +145,7 @@ export class CommentController {
 
       res.status(201).json({
         success: true,
-        message: "Commentaire crée avec succès",
+        message: "Commentaire créé avec succès",
         data: newComment,
       });
     } catch (error) {
@@ -167,18 +167,18 @@ export class CommentController {
   ) {
     try {
       const { id } = req.params;
-      const { commentaire } = req.body;
+      const { content } = req.body;
       const user_id = req.user?.id;
 
-      if (!commentaire) {
+      if (!content) {
         return res.status(400).json({
           success: false,
-          message: "Le contenue du commentaire est requis",
+          message: "Le contenu du commentaire est requis",
         });
       }
 
-      // Verifier si le commentaire existe et appartient à l'utilisateur
-      const existingComment = await prisma.commentaires.findUnique({
+      // Vérifier si le commentaire existe et appartient à l'utilisateur
+      const existingComment = await prisma.comments.findUnique({
         where: { id: parseInt(id) },
       });
 
@@ -196,14 +196,14 @@ export class CommentController {
         });
       }
 
-      const updatedComment = await prisma.commentaires.update({
+      const updatedComment = await prisma.comments.update({
         where: { id: parseInt(id) },
         data: {
-          commentaire,
+          content,
           updated_at: new Date(),
         },
         include: {
-          users: {
+          user: {
             select: {
               id: true,
               username: true,
@@ -236,8 +236,7 @@ export class CommentController {
       const user_id = req.user?.id;
 
       // Vérifier si le commentaire existe et appartient à l'utilisateur
-
-      const existingComment = await prisma.commentaires.findUnique({
+      const existingComment = await prisma.comments.findUnique({
         where: { id: parseInt(id) },
       });
 
@@ -255,7 +254,7 @@ export class CommentController {
         });
       }
 
-      await prisma.commentaires.delete({
+      await prisma.comments.delete({
         where: { id: parseInt(id) },
       });
 
@@ -273,7 +272,6 @@ export class CommentController {
   }
 
   // Récupérer tous les commentaires d'un utilisateur
-
   static async getUserComments(
     req: AuthenticatedRequest,
     res: Response<ApiResponse<CommentWithRelations[]>>
@@ -281,18 +279,18 @@ export class CommentController {
     try {
       const user_id = req.user?.id;
 
-      const comments = await prisma.commentaires.findMany({
+      const comments = await prisma.comments.findMany({
         where: {
           user_id,
         },
         include: {
-          posts: {
+          post: {
             select: {
               id: true,
               title: true,
             },
           },
-          like_comments: true,
+          likes: true,
         },
         orderBy: {
           created_at: "desc",
@@ -306,9 +304,10 @@ export class CommentController {
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: "Erreur lors e la récupération des commentaires",
+        message: "Erreur lors de la récupération des commentaires",
         error: error instanceof Error ? error.message : "Erreur inconnue",
       });
     }
   }
 }
+

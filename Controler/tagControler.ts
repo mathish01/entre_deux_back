@@ -91,11 +91,11 @@ export class TagController {
         });
       }
 
-            // Normaliser le nom du tag (minuscules, sans #)
-            const normalizedName = name.tolowerCase().replace('#', '');
+      // Normaliser le nom du tag (minuscules, sans #)
+      const normalizedName = name.tolowerCase().replace("#", "");
 
       // Vérifier si le tag existe déjà
-      const existingTag = await prisma.references_tags.findUnique({
+      const existingTag = await prisma.tags.findUnique({
         where: { name: normalizedName },
       });
 
@@ -107,7 +107,7 @@ export class TagController {
         });
       }
 
-      const newTag = await prisma.references_tags.create({
+      const newTag = await prisma.tags.create({
         data: {
           name: normalizedName,
         },
@@ -134,11 +134,11 @@ export class TagController {
     res: Response<ApiResponse<TagWithRelations[]>>
   ) {
     try {
-      const tags = await prisma.references_tags.findMany({
+      const tags = await prisma.tags.findMany({
         include: {
-          post_tags: {
+          postTags: {
             include: {
-              posts: {
+              post: {
                 select: {
                   id: true,
                   title: true,
@@ -172,7 +172,7 @@ export class TagController {
     res: Response<ApiResponse<string[]>>
   ) {
     try {
-      const tags = await prisma.references_tags.findMany({
+      const tags = await prisma.tags.findMany({
         select: {
           name: true,
         },
@@ -227,27 +227,25 @@ export class TagController {
         });
       }
 
-            // Normaliser le nom du tag
-            const normalizedName = tagName.tolowerCase().replace('#', '');
+      // Normaliser le nom du tag
+      const normalizedName = tagName.tolowerCase().replace("#", "");
 
       // Trouver ou créer le tag
-      let tag = await prisma.references_tags.findUnique({
+      let tag = await prisma.tags.findUnique({
         where: { name: normalizedName },
       });
 
       if (!tag) {
-        tag = await prisma.references_tags.create({
+        tag = await prisma.tags.create({
           data: { name: normalizedName },
         });
       }
 
       // Vérifier si l'association existe déjà
-      const existingAssociation = await prisma.post_tags.findUnique({
+      const existingAssociation = await prisma.postTag.findFirst({
         where: {
-          post_id_tag_id: {
-            post_id: parseInt(postId),
-            tag_id: tag.id,
-          },
+          post_id: parseInt(postId),
+          tag_id: tag.id,
         },
       });
 
@@ -259,14 +257,14 @@ export class TagController {
       }
 
       // Créer l'association
-      const association = await prisma.post_tags.create({
+      const association = await prisma.postTag.create({
         data: {
           post_id: parseInt(postId),
           tag_id: tag.id,
         },
         include: {
           tag: true,
-          posts: {
+          post: {
             select: {
               id: true,
               title: true,
@@ -297,7 +295,7 @@ export class TagController {
     try {
       const { postId } = req.params;
 
-      const postTags = await prisma.post_tags.findMany({
+      const postTags = await prisma.postTag.findMany({
         where: { post_id: parseInt(postId) },
         include: {
           tag: true,
@@ -330,7 +328,7 @@ export class TagController {
     try {
       const { postId, tagId } = req.params;
 
-      const association = await prisma.post_tags.findUnique({
+      const association = await prisma.postTag.findUnique({
         where: {
           post_id_tag_id: {
             post_id: parseInt(postId),
@@ -346,7 +344,7 @@ export class TagController {
         });
       }
 
-      await prisma.post_tags.delete({
+      await prisma.postTag.delete({
         where: {
           post_id_tag_id: {
             post_id: parseInt(postId),
@@ -391,13 +389,13 @@ export class TagController {
         });
       }
 
-            // Ectraire le nom du tag (sans le #)
-            const tagName = q.substring(1).toLocaleLowerCase();
+      // Ectraire le nom du tag (sans le #)
+      const tagName = q.substring(1).toLocaleLowerCase();
 
       // Rechercher les posts qui ont ce tag
       const posts = await prisma.posts.findMany({
         where: {
-          post_tags: {
+          tags: {
             some: {
               tag: {
                 name: {
@@ -409,13 +407,13 @@ export class TagController {
           },
         },
         include: {
-          users: {
+          user: {
             select: {
               id: true,
               username: true,
             },
           },
-          post_tags: {
+          tags: {
             include: {
               tag: {
                 select: {
@@ -453,33 +451,33 @@ export class TagController {
     try {
       const { tagName } = req.params;
 
-            const posts = await prisma.posts.findMany({
-                where: {
-                    post_tags: {
-                        some: {
-                            tag: {
-                                name: tagName.toLocaleLowerCase()
-                            }
-                        }
-                    }
-                },
-                include: {
-                    users: {
-                        select: {
-                            id: true, 
-                            username: true
-                        }
-                    },
-                    post_tags: {
-                        include: {
-                            tag: true
-                        }
-                    }
-                },
-                orderBy: {
-                    created_at: 'desc'
-                }
-            });
+      const posts = await prisma.posts.findMany({
+        where: {
+          tags: {
+            some: {
+              tag: {
+                name: tagName.toLocaleLowerCase(),
+              },
+            },
+          },
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              username: true,
+            },
+          },
+          tags: {
+            include: {
+              tag: true,
+            },
+          },
+        },
+        orderBy: {
+          created_at: "desc",
+        },
+      });
 
       res.status(200).json({
         success: true,

@@ -56,7 +56,7 @@ model Comments {
 }
 
 model LikePost {
-  id      Int   @id @default(autoincrement())
+  id      Int    @id @default(autoincrement())
   user_id Int?
   post_id Int?
   user    Users? @relation(fields: [user_id], references: [id], onDelete: Cascade)
@@ -64,7 +64,7 @@ model LikePost {
 }
 
 model LikeComment {
-  id         Int      @id @default(autoincrement())
+  id         Int       @id @default(autoincrement())
   user_id    Int?
   comment_id Int?
   user       Users?    @relation(fields: [user_id], references: [id], onDelete: Cascade)
