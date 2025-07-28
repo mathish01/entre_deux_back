@@ -7,89 +7,95 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model commentaires {
-  id            Int             @id @default(autoincrement())
-  commentaire   String          @db.VarChar(255)
-  created_at    DateTime?       @default(now()) @db.Timestamptz(6)
-  updated_at    DateTime?        @updatedAt @db.Timestamptz(6)
-  user_id       Int?
-  post_id       Int?
-  posts         posts?          @relation(fields: [post_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  users         users?          @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  like_comments like_comments[]
+model User {
+  id         Int       @id @default(autoincrement())
+  username   String    @db.VarChar(255)
+  email      String    @unique @db.VarChar(255)
+  password   String    @db.VarChar(255)
+  phone      String    @db.VarChar(50)
+  role       String    @db.VarChar(50)
+  created_at DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at DateTime? @updatedAt @db.Timestamptz(6)
+
+  posts           Post[]
+  comments        Comment[]
+  likesOnPosts    LikePost[]
+  likesOnComments LikeComment[]
+  followers       Follow[]      @relation("follows_follower_idToUser")
+  following       Follow[]      @relation("follows_user_idToUser")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-model follows {
-  id                               Int    @id @default(autoincrement())
-  user_id                          Int?
-  follower_id                      Int?
-  users_follows_follower_idTousers users? @relation("follows_follower_idTousers", fields: [follower_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  users_follows_user_idTousers     users? @relation("follows_user_idTousers", fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+model Post {
+  id          Int       @id @default(autoincrement())
+  image_url   String    @db.VarChar(255)
+  title       String    @db.VarChar(50)
+  description String    @db.VarChar(255)
+  created_at  DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at  DateTime? @updatedAt @db.Timestamptz(6)
+
+  user_id Int?
+  user    User? @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  comments Comment[]
+  likes    LikePost[]
+  tags     PostTag[]
+}
+
+model Comment {
+  id         Int       @id @default(autoincrement())
+  content    String    @db.VarChar(255)
+  created_at DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at DateTime? @updatedAt @db.Timestamptz(6)
+
+  user_id Int?
+  post_id Int?
+  user    User? @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  post    Post? @relation(fields: [post_id], references: [id], onDelete: Cascade)
+
+  likes LikeComment[]
+}
+
+model LikePost {
+  id      Int   @id @default(autoincrement())
+  user_id Int?
+  post_id Int?
+  user    User? @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  post    Post? @relation(fields: [post_id], references: [id], onDelete: Cascade)
+}
+
+model LikeComment {
+  id         Int      @id @default(autoincrement())
+  user_id    Int?
+  comment_id Int?
+  user       User?    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  comment    Comment? @relation(fields: [comment_id], references: [id], onDelete: Cascade)
+}
+
+model Follow {
+  id          Int  @id @default(autoincrement())
+  user_id     Int?
+  follower_id Int?
+
+  user     User? @relation("follows_user_idToUser", fields: [user_id], references: [id], onDelete: Cascade)
+  follower User? @relation("follows_follower_idToUser", fields: [follower_id], references: [id], onDelete: Cascade)
 
   @@unique([user_id, follower_id])
 }
 
-model like_comments {
-  id             Int           @id @default(autoincrement())
-  user_id        Int?
-  commentaire_id Int?
-  commentaires   commentaires? @relation(fields: [commentaire_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  users          users?        @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+model Tag {
+  id         Int       @id @default(autoincrement())
+  name       String    @unique @db.VarChar(255)
+  created_at DateTime? @default(now()) @db.Timestamptz(6)
+  postTags   PostTag[]
 }
 
-model like_posts {
-  id      Int    @id @default(autoincrement())
-  user_id Int?
-  post_id Int?
-  posts   posts? @relation(fields: [post_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  users   users? @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-}
-
-model posts {
-  id              Int               @id @default(autoincrement())
-  image_url       String            @db.VarChar(255)
-  title           String            @db.VarChar(50)
-  description     String            @db.VarChar(255)
-  created_at      DateTime?         @default(now()) @db.Timestamptz(6)
-  updated_at      DateTime?          @updatedAt @db.Timestamptz(6)
-  user_id         Int?
-  commentaires    commentaires[]
-  like_posts      like_posts[]
-  users           users?            @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  post_tags post_tags[]
-}
-
-model references_tags {
-  id         Int         @id @default(autoincrement())
-  name       String      @unique @db.VarChar(255)
-  created_at DateTime?   @default(now()) @db.Timestamptz(6)
-  post_tags  post_tags[]
-}
-
-model post_tags {
-  id      Int             @id @default(autoincrement())
+model PostTag {
+  id      Int @id @default(autoincrement())
   post_id Int
   tag_id  Int
-  posts   posts           @relation(fields: [post_id], references: [id], onDelete: Cascade)
-  tag     references_tags @relation(fields: [tag_id], references: [id], onDelete: Cascade)
-  
-  @@unique([post_id, tag_id])
-}
 
-model users {
-  id                                 Int             @id @default(autoincrement())
-  username                           String          @db.VarChar(255)
-  email                              String @unique  @db.VarChar(255)
-  password                           String          @db.VarChar(255)
-  phone                              String          @db.VarChar(50)
-  role                               String          @db.VarChar(50)
-  created_at                         DateTime?       @default(now()) @db.Timestamptz(6)
-  updated_at                         DateTime?        @updatedAt @db.Timestamptz(6)      
-  commentaires                       commentaires[]
-  follows_follows_follower_idTousers follows[]       @relation("follows_follower_idTousers")
-  follows_follows_user_idTousers     follows[]       @relation("follows_user_idTousers")
-  like_comments                      like_comments[]
-  like_posts                         like_posts[]
-  posts                              posts[]
+  post Post @relation(fields: [post_id], references: [id], onDelete: Cascade)
+  tag  Tag  @relation(fields: [tag_id], references: [id], onDelete: Cascade)
+
+  @@unique([post_id, tag_id])
 }
