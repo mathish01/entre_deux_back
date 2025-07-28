@@ -2,14 +2,20 @@
   "name": "entre_deux_back",
   "version": "1.0.0",
   "main": "dist/app.js",
+  
   "scripts": {
     "dev": "nodemon --exec ts-node app.ts",
     "build": "tsc",
     "start": "node dist/app.js",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "seed": "ts-node prisma/seed.ts"
   },
+  "prisma": {
+  "seed": "npm run seed"
+},
+
   "keywords": [],
   "author": "",
   "license": "ISC",
