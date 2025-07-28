@@ -7,7 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
+model Users {
   id         Int       @id @default(autoincrement())
   username   String    @db.VarChar(255)
   email      String    @unique @db.VarChar(255)
@@ -17,15 +17,15 @@ model User {
   created_at DateTime? @default(now()) @db.Timestamptz(6)
   updated_at DateTime? @updatedAt @db.Timestamptz(6)
 
-  posts           Post[]
-  comments        Comment[]
+  posts           Posts[]
+  comments        Comments[]
   likesOnPosts    LikePost[]
   likesOnComments LikeComment[]
   followers       Follow[]      @relation("follows_follower_idToUser")
   following       Follow[]      @relation("follows_user_idToUser")
 }
 
-model Post {
+model Posts {
   id          Int       @id @default(autoincrement())
   image_url   String    @db.VarChar(255)
   title       String    @db.VarChar(50)
@@ -34,14 +34,14 @@ model Post {
   updated_at  DateTime? @updatedAt @db.Timestamptz(6)
 
   user_id Int?
-  user    User? @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user    Users? @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
-  comments Comment[]
+  comments Comments[]
   likes    LikePost[]
   tags     PostTag[]
 }
 
-model Comment {
+model Comments {
   id         Int       @id @default(autoincrement())
   content    String    @db.VarChar(255)
   created_at DateTime? @default(now()) @db.Timestamptz(6)
@@ -49,8 +49,8 @@ model Comment {
 
   user_id Int?
   post_id Int?
-  user    User? @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  post    Post? @relation(fields: [post_id], references: [id], onDelete: Cascade)
+  user    Users? @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  post    Posts? @relation(fields: [post_id], references: [id], onDelete: Cascade)
 
   likes LikeComment[]
 }
@@ -59,16 +59,16 @@ model LikePost {
   id      Int   @id @default(autoincrement())
   user_id Int?
   post_id Int?
-  user    User? @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  post    Post? @relation(fields: [post_id], references: [id], onDelete: Cascade)
+  user    Users? @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  post    Posts? @relation(fields: [post_id], references: [id], onDelete: Cascade)
 }
 
 model LikeComment {
   id         Int      @id @default(autoincrement())
   user_id    Int?
   comment_id Int?
-  user       User?    @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  comment    Comment? @relation(fields: [comment_id], references: [id], onDelete: Cascade)
+  user       Users?    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  comment    Comments? @relation(fields: [comment_id], references: [id], onDelete: Cascade)
 }
 
 model Follow {
@@ -76,13 +76,13 @@ model Follow {
   user_id     Int?
   follower_id Int?
 
-  user     User? @relation("follows_user_idToUser", fields: [user_id], references: [id], onDelete: Cascade)
-  follower User? @relation("follows_follower_idToUser", fields: [follower_id], references: [id], onDelete: Cascade)
+  user     Users? @relation("follows_user_idToUser", fields: [user_id], references: [id], onDelete: Cascade)
+  follower Users? @relation("follows_follower_idToUser", fields: [follower_id], references: [id], onDelete: Cascade)
 
   @@unique([user_id, follower_id])
 }
 
-model Tag {
+model Tags {
   id         Int       @id @default(autoincrement())
   name       String    @unique @db.VarChar(255)
   created_at DateTime? @default(now()) @db.Timestamptz(6)
@@ -94,8 +94,8 @@ model PostTag {
   post_id Int
   tag_id  Int
 
-  post Post @relation(fields: [post_id], references: [id], onDelete: Cascade)
-  tag  Tag  @relation(fields: [tag_id], references: [id], onDelete: Cascade)
+  post Posts @relation(fields: [post_id], references: [id], onDelete: Cascade)
+  tag  Tags  @relation(fields: [tag_id], references: [id], onDelete: Cascade)
 
   @@unique([post_id, tag_id])
 }
