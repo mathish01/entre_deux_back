@@ -73,7 +73,7 @@ export class CommentController {
           post_id: parseInt(postId),
         },
         include: {
-          user: {
+          users: {
             select: {
               id: true,
               username: true,
@@ -134,7 +134,7 @@ export class CommentController {
           updated_at: new Date(),
         },
         include: {
-          user: {
+          users: {
             select: {
               id: true,
               username: true,
@@ -203,7 +203,7 @@ export class CommentController {
           updated_at: new Date(),
         },
         include: {
-          user: {
+          users: {
             select: {
               id: true,
               username: true,
@@ -284,7 +284,7 @@ export class CommentController {
           user_id,
         },
         include: {
-          post: {
+          posts: {
             select: {
               id: true,
               title: true,

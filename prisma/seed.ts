@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 async function main() {
   // Création d’un utilisateur
 //   const hashedPassword = await bcrypt.hash(password, 10);
-  const user = await prisma.user.create({
+  const user = await prisma.users.create({
     data: {
       username: "faty",
       email: "faty@example.com",
@@ -16,20 +16,20 @@ async function main() {
   });
 
   // Création de tags
-  const tag1 = await prisma.tag.create({
+  const tag1 = await prisma.tags.create({
     data: {
       name: "Inspiration",
     },
   });
 
-  const tag2 = await prisma.tag.create({
+  const tag2 = await prisma.tags.create({
     data: {
       name: "Captivant",
     },
   });
 
   // Création d’un post
-  const post = await prisma.post.create({
+  const post = await prisma.posts.create({
     data: {
       title: "Premier post",
       description: "Voici mon tout premier post !",
@@ -45,7 +45,7 @@ async function main() {
   });
 
   // Commentaire sur le post
-  await prisma.comment.create({
+  await prisma.comments.create({
     data: {
       content: "Super photo !",
       user_id: user.id,
