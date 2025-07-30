@@ -9,6 +9,8 @@ export const authMiddleware = (req: AuthRequest, res: Response, next: NextFuncti
   const authHeader = req.headers.authorization;
   const token = authHeader && authHeader.split(" ")[1];
 
+  console.log("💥 authMiddleware appelé !");
+
   if (!token) return res.status(401).json({ message: "Token manquant" });
 
   try {

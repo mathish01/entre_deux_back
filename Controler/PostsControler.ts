@@ -1,7 +1,8 @@
 import { type Request, type Response } from "express";
 import { prisma } from "../lib/prisma";
+import { AuthRequest } from "../middleware/authMiddleware";
 
-export const getPosts = async (req: Request, res: Response) => {
+export const getPosts = async (req: AuthRequest, res: Response) => {
  try{
         const posts = await prisma.posts.findMany();
         res.json(posts);
@@ -11,12 +12,18 @@ export const getPosts = async (req: Request, res: Response) => {
 }
 
 // route POST création de post
-export const createPosts = async (req: Request, res: Response) => {
+export const createPosts = async (req: AuthRequest, res: Response) => {
   try {
-    const { title, description, image_url, user_id } = req.body;
+    // const { title, description, image_url, user_id } = req.body;
+    const { title, description, image_url } = req.body;
+    console.log("🧠 req.userId =", req.userId);
+    console.log("📦 req.body =", req.body);
+
+    console.log("🔍 req.userId =", req.userId);
 
     // Vérification basique des champs requis
-    if (!title || !description || !image_url || !user_id) {
+    // if (!title || !description || !image_url || !user_id) {
+    if (!title || !description || !image_url) {
       return res.status(400).json({ error: "Champs manquants" });
     }
 
@@ -25,7 +32,8 @@ export const createPosts = async (req: Request, res: Response) => {
         title,
         description,
         image_url,
-        user_id: Number(user_id), // au cas où c'est une string depuis le front
+        //user_id: Number(user_id), // au cas où c'est une string depuis le front
+        user_id: req.userId,
       },
     });
 
